@@ -8,12 +8,12 @@
  *   You should have received a copy of the GNU General Public License along with this program. If not see <http://www.gnu.org/licenses>
  */
 
-package com.javase11.certification.classesobjects.improved.app;
+package com.javase11.certification.productmanagement.improved.app;
 
 import java.math.BigDecimal;
 
-import com.javase11.certification.classesobjects.improved.data.Product;
-import com.javase11.certification.classesobjects.improved.data.Rating;
+import com.javase11.certification.productmanagement.improved.data.Product;
+import com.javase11.certification.productmanagement.improved.data.Rating;
 
 /**
  * {@code Shop} class represents an application that manages Products
@@ -24,7 +24,7 @@ import com.javase11.certification.classesobjects.improved.data.Rating;
 public class Shop {
 	public static void main(final String[] args) {
 		final Product p1 = new Product(101, "Tea", BigDecimal.valueOf(1.99));
-		final Product p2 = new Product(102, "Coffe", BigDecimal.valueOf(1.99), Rating.FOUR_STAR);
+		final Product p2 = new Product(102, "Coffee", BigDecimal.valueOf(1.99), Rating.FOUR_STAR);
 		final Product p3 = new Product(103, "Cake", BigDecimal.valueOf(3.99), Rating.FIVE_STAR);
 		final Product p4 = new Product();
 		final Product p5 = p3.applyRating(Rating.THREE_STAR);
