@@ -254,8 +254,8 @@ public class ProductManager {
 		private final ResourceBundle resources;
 
 		private ResourceFormatter(final Locale locale) {
-			resources = ResourceBundle.getBundle(
-					"com/javase11/certification/productmanagement/hadleexceptions/data/resources", locale);
+			resources = ResourceBundle.getBundle("com/javase11/certification/productmanagement/javaio/data/resources",
+					locale);
 			dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).localizedBy(locale);
 			moneyFormat = NumberFormat.getCurrencyInstance(locale);
 		}
