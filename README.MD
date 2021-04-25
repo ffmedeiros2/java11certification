@@ -139,6 +139,15 @@ Para rodar o executável utilizar o comando:
 
 ### 15. Open Module Content
 
+Para gerar o jlink relativo à esta lição rodar os seguintes comandos:
+
+    ant clean compile
+    jlink --output dist/artifacts/shop-app --add-modules labs.pm --module-path build --launcher shop=labs.pm/com.javase11.certification.productmanagement.modules.client.Shop
+
+Será gerado um diretório `/dist/artifacts/shop-app/` que contém tudo o que é necessário para rodar a aplicação.
+Em `bin/` existirá um arquivo `shop.bat` caso você esteja utilizando um ambiente windows ou um arquivo `shop.sh` caso
+você esteja utilizando um ambiente linux, ao executar este arquivo você conseguirá rodar a aplicação.
+
 ### 16. Annotations
 
 ### 17. Java Database Connectivity
@@ -148,11 +157,4 @@ Para rodar o executável utilizar o comando:
 ### 19. Advanced Generics
 
 ### 20. Oracle Cloud Deployment
-
----
-
-
-Para gerar o jlink relativo à lição de modules rodar os seguintes comandos:
-
-    jlink --output .\dist\artifacts\shop-app --add-modules labs.pm --module-path .\build --launcher shop=labs.pm/com.javase11.certification.productmanagement.modules.client.Shop
-  
+ 
