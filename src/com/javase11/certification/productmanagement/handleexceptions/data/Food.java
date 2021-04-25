@@ -8,13 +8,12 @@
  *   You should have received a copy of the GNU General Public License along with this program. If not see <http://www.gnu.org/licenses>
  */
 
-package com.javase11.certification.productmanagement.concurrencymultithreading.data;
+package com.javase11.certification.productmanagement.handleexceptions.data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class Food extends Product {
-    private static final long serialVersionUID = -8411995638444638853L;
     private final LocalDate bestBefore;
 
     Food(final int id, final String name, final BigDecimal price, final Rating rating, final LocalDate bestBefore) {
@@ -38,7 +37,7 @@ public class Food extends Product {
      * @return the the value of bestBefore
      */
     @Override
-	public LocalDate getBestBefore() {
+    public LocalDate getBestBefore() {
         return bestBefore;
     }
 

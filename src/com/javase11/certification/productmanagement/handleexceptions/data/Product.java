@@ -8,9 +8,8 @@
  *   You should have received a copy of the GNU General Public License along with this program. If not see <http://www.gnu.org/licenses>
  */
 
-package com.javase11.certification.productmanagement.concurrencymultithreading.data;
+package com.javase11.certification.productmanagement.handleexceptions.data;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
@@ -24,13 +23,12 @@ import java.util.Objects;
  * @author oracle
  * @version 4.0
  */
-public abstract class Product implements Rateable<Product>, Serializable {
+public abstract class Product implements Rateable<Product> {
     /**
      * A constant that defined a {@link BigDecimal BigDecimal} value of the discount rate <br>
      * Discount rate is 10%
      */
     public static final BigDecimal DISCOUNT_RATE = BigDecimal.valueOf(0.1);
-    private static final long serialVersionUID = 7760839199144950317L;
     private final int id;
     private final String name;
     private final BigDecimal price;
@@ -41,15 +39,6 @@ public abstract class Product implements Rateable<Product>, Serializable {
         this.name = name;
         this.price = price;
         this.rating = rating;
-    }
-
-    /**
-     * Get the value of best before date for the product
-     *
-     * @return the the value of bestBefore
-     */
-    public LocalDate getBestBefore() {
-        return LocalDate.now();
     }
 
     /**
@@ -78,11 +67,20 @@ public abstract class Product implements Rateable<Product>, Serializable {
         return rating;
     }
 
+    /**
+     * Get the value of best before date for the product
+     *
+     * @return the the value of bestBefore
+     */
+    public LocalDate getBestBefore() {
+        return LocalDate.now();
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
-            return true;
-        }
+			return true;
+		}
         // if (o != null && getClass() == o.getClass()) {
         if (o instanceof Product) {
             final Product product = (Product) o;

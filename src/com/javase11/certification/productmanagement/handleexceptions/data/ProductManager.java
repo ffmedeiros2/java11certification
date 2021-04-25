@@ -8,7 +8,7 @@
  *   You should have received a copy of the GNU General Public License along with this program. If not see <http://www.gnu.org/licenses>
  */
 
-package com.javase11.certification.productmanagement.streamapi.data;
+package com.javase11.certification.productmanagement.handleexceptions.data;
 
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -16,11 +16,15 @@ import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -32,9 +36,13 @@ public class ProductManager {
             "en-US", new ResourceFormatter(Locale.US), "fr-FR", new ResourceFormatter(Locale.FRANCE), "ru-RU",
             new ResourceFormatter(new Locale("ru", "RU")), "zh-CN", new ResourceFormatter(Locale.CHINA), "pt-BR",
             new ResourceFormatter(new Locale("pt", "BR")));
+    private static final Logger logger = Logger.getLogger(ProductManager.class.getName());
     private final Charset utf8Charset = Charset.forName("UTF-8");
     private final Map<Product, List<Review>> products = new HashMap<>();
-
+    private final ResourceBundle config = ResourceBundle.getBundle(
+            "com/javase11/certification/productmanagement/handleexceptions/data/config");
+    private final MessageFormat reviewFormat = new MessageFormat(config.getString("review.data.format"));
+    private final MessageFormat productFormat = new MessageFormat(config.getString("product.data.format"));
     private ResourceFormatter formatter;
 
     public ProductManager(final Locale locale) {
@@ -66,8 +74,9 @@ public class ProductManager {
         return product;
     }
 
-    public Product findProduct(final int id) {
-        return products.keySet().stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+    public Product findProduct(final int id) throws ProductManagerException {
+        return products.keySet().stream().filter(p -> p.getId() == id).findFirst().orElseThrow(
+                () -> new ProductManagerException("Product with id " + id + " not found"));
     }
 
     public void printProductReport(final Product product) {
@@ -92,7 +101,11 @@ public class ProductManager {
     }
 
     public void printProductReport(final int id) {
-        printProductReport(findProduct(id));
+        try {
+            printProductReport(findProduct(id));
+        } catch (final ProductManagerException e) {
+            logger.log(Level.INFO, e.getMessage());
+        }
     }
 
     public void printProducts(final Predicate<Product> filter, final Comparator<Product> sorter) {
@@ -108,6 +121,36 @@ public class ProductManager {
         }
     }
 
+    public void parseReview(final String text) {
+        try {
+            final Object[] values = reviewFormat.parse(text);
+            reviewProduct(Integer.parseInt((String) values[0]), Rateable.convert(Integer.parseInt((String) values[1])),
+                    (String) values[2]);
+        } catch (final ParseException | NumberFormatException e) {
+            logger.log(Level.WARNING, "Error parsing review: " + text);
+        }
+    }
+
+    public void parseProduct(final String text) {
+        try {
+            final Object[] values = productFormat.parse(text);
+            final int id = Integer.parseInt((String) values[1]);
+            final String name = (String) values[2];
+            final BigDecimal price = BigDecimal.valueOf(Double.parseDouble((String) values[3]));
+            final Rating rating = Rateable.convert(Integer.parseInt((String) values[4]));
+            switch ((String) values[0]) {
+                case "D":
+                    createProduct(id, name, price, rating);
+                    break;
+                case "F":
+                    final LocalDate bestBefore = LocalDate.parse((String) values[5]);
+                    createProduct(id, name, price, rating, bestBefore);
+            }
+        } catch (final ParseException | NumberFormatException | DateTimeParseException e) {
+            logger.log(Level.WARNING, "Error parsing product: " + text + " " + e.getMessage());
+        }
+    }
+
     public Product reviewProduct(final Product product, final Rating rating, final String comments) {
         final List<Review> reviews = products.get(product);
         products.remove(product, reviews);
@@ -119,7 +162,12 @@ public class ProductManager {
     }
 
     public Product reviewProduct(final int id, final Rating rating, final String comments) {
-        return reviewProduct(findProduct(id), rating, comments);
+        try {
+            return reviewProduct(findProduct(id), rating, comments);
+        } catch (final ProductManagerException e) {
+            logger.log(Level.INFO, e.getMessage());
+        }
+        return null;
     }
 
     public Map<String, String> getDiscounts() {
@@ -135,7 +183,7 @@ public class ProductManager {
 
         private ResourceFormatter(final Locale locale) {
             resources = ResourceBundle.getBundle(
-                    "com/javase11/certification/productmanagement/streamapi/data/resources", locale);
+                    "com/javase11/certification/productmanagement/handleexceptions/data/resources", locale);
             dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).localizedBy(locale);
             moneyFormat = NumberFormat.getCurrencyInstance(locale);
         }

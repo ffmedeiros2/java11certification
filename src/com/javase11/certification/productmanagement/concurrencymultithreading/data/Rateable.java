@@ -11,25 +11,24 @@
 package com.javase11.certification.productmanagement.concurrencymultithreading.data;
 
 /**
- *
  * @author oracle
  * @version 4.0
  */
 @FunctionalInterface
 public interface Rateable<T> {
-	Rating DEFAULT_RATING = Rating.NOT_RATED;
+    Rating DEFAULT_RATING = Rating.NOT_RATED;
 
-	static Rating convert(final int stars) {
-		return (stars >= 0 && stars <= 5) ? Rating.values()[stars] : DEFAULT_RATING;
-	}
+    static Rating convert(final int stars) {
+        return (stars >= 0 && stars <= 5) ? Rating.values()[stars] : DEFAULT_RATING;
+    }
 
-	T applyRating(Rating rating);
+    T applyRating(Rating rating);
 
-	default T applyRating(final int stars) {
-		return applyRating(convert(stars));
-	}
+    default T applyRating(final int stars) {
+        return applyRating(convert(stars));
+    }
 
-	default Rating getRating() {
-		return DEFAULT_RATING;
-	}
+    default Rating getRating() {
+        return DEFAULT_RATING;
+    }
 }

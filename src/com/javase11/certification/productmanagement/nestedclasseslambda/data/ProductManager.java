@@ -10,7 +10,10 @@
 
 package com.javase11.certification.productmanagement.nestedclasseslambda.data;
 
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.time.LocalDate;
@@ -19,139 +22,150 @@ import java.time.format.FormatStyle;
 import java.util.*;
 
 /**
- *
  * @author oracle
  * @version 4.0
  */
 public class ProductManager {
-	private static final Map<String, ResourceFormatter> formatters = Map.of("en-GB", new ResourceFormatter(Locale.UK),
-			"en-US", new ResourceFormatter(Locale.US), "fr-FR", new ResourceFormatter(Locale.FRANCE), "ru-RU",
-			new ResourceFormatter(new Locale("ru", "RU")), "zh-CN", new ResourceFormatter(Locale.CHINA), "pt-BR",
-			new ResourceFormatter(new Locale("pt", "BR")));
-	private final Map<Product, List<Review>> products = new HashMap<>();
+    private static final Map<String, ResourceFormatter> formatters = Map.of("en-GB", new ResourceFormatter(Locale.UK),
+            "en-US", new ResourceFormatter(Locale.US), "fr-FR", new ResourceFormatter(Locale.FRANCE), "ru-RU",
+            new ResourceFormatter(new Locale("ru", "RU")), "zh-CN", new ResourceFormatter(Locale.CHINA), "pt-BR",
+            new ResourceFormatter(new Locale("pt", "BR")));
+    private final Charset utf8Charset = Charset.forName("UTF-8");
+    private final Map<Product, List<Review>> products = new HashMap<>();
 
-	private ResourceFormatter formatter;
+    private ResourceFormatter formatter;
 
-	public ProductManager(final Locale locale) {
-		this(locale.toLanguageTag());
-	}
+    public ProductManager(final Locale locale) {
+        this(locale.toLanguageTag());
+    }
 
-	public ProductManager(final String laguageTag) {
-		changeLocale(laguageTag);
-	}
+    public ProductManager(final String laguageTag) {
+        changeLocale(laguageTag);
+    }
 
-	public static Set<String> getSupportedLocales() {
-		return formatters.keySet();
-	}
+    public static Set<String> getSupportedLocales() {
+        return formatters.keySet();
+    }
 
-	public void changeLocale(final String laguageTag) {
-		formatter = formatters.getOrDefault(laguageTag, formatters.get("pt-BR"));
-	}
+    public void changeLocale(final String laguageTag) {
+        formatter = formatters.getOrDefault(laguageTag, formatters.get("pt-BR"));
+    }
 
-	public Product createProduct(final int id, final String name, final BigDecimal price, final Rating rating,
-			final LocalDate bestBefore) {
-		final Product product = new Food(id, name, price, rating, bestBefore);
-		products.putIfAbsent(product, new ArrayList<>());
-		return product;
-	}
+    public Product createProduct(final int id, final String name, final BigDecimal price, final Rating rating,
+                                 final LocalDate bestBefore) {
+        final Product product = new Food(id, name, price, rating, bestBefore);
+        products.putIfAbsent(product, new ArrayList<>());
+        return product;
+    }
 
-	public Product createProduct(final int id, final String name, final BigDecimal price, final Rating rating) {
-		final Product product = new Drink(id, name, price, rating);
-		products.putIfAbsent(product, new ArrayList<>());
-		return product;
-	}
+    public Product createProduct(final int id, final String name, final BigDecimal price, final Rating rating) {
+        final Product product = new Drink(id, name, price, rating);
+        products.putIfAbsent(product, new ArrayList<>());
+        return product;
+    }
 
-	public Product findProduct(final int id) {
-		Product result = null;
-		for (final Product product : products.keySet()) {
-			if (product.getId() == id) {
-				result = product;
-				break;
-			}
-		}
-		return result;
-	}
+    public Product findProduct(final int id) {
+        Product result = null;
+        for (final Product product : products.keySet()) {
+            if (product.getId() == id) {
+                result = product;
+                break;
+            }
+        }
+        return result;
+    }
 
-	public void printProductReport(final Product product) {
-		final StringBuilder txt = new StringBuilder();
-		txt.append(formatter.formatProduct(product));
-		txt.append("\n");
+    public void printProductReport(final Product product) {
+        final StringBuilder txt = new StringBuilder();
+        txt.append(formatter.formatProduct(product));
+        txt.append("\n");
 
-		final List<Review> reviews = products.get(product);
-		Collections.sort(reviews);
-		for (final Review review : reviews) {
-			txt.append(formatter.formatReview(review));
-			txt.append("\n");
-		}
+        final List<Review> reviews = products.get(product);
+        Collections.sort(reviews);
+        for (final Review review : reviews) {
+            txt.append(formatter.formatReview(review));
+            txt.append("\n");
+        }
 
-		if (reviews.isEmpty()) {
-			txt.append(formatter.getText("no.reviews"));
-			txt.append("\n");
-		}
+        if (reviews.isEmpty()) {
+            txt.append(formatter.getText("no.reviews"));
+            txt.append("\n");
+        }
 
-		System.out.println(txt);
-	}
+        try {
+            final PrintStream out = new PrintStream(System.out, true, utf8Charset.name());
+            out.println(txt);
+        } catch (final UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
 
-	public void printProductReport(final int id) {
-		printProductReport(findProduct(id));
-	}
+    public void printProductReport(final int id) {
+        printProductReport(findProduct(id));
+    }
 
-	public void printProducts(final Comparator<Product> sorter) {
-		final List<Product> productList = new ArrayList<>(products.keySet());
-		productList.sort(sorter);
-		final StringBuilder txt = new StringBuilder();
-		for (final Product product : productList) {
-			txt.append(formatter.formatProduct(product));
-			txt.append('\n');
-		}
-		System.out.println(txt);
-	}
+    public void printProducts(final Comparator<Product> sorter) {
+        final List<Product> productList = new ArrayList<>(products.keySet());
+        productList.sort(sorter);
+        final StringBuilder txt = new StringBuilder();
+        for (final Product product : productList) {
+            txt.append(formatter.formatProduct(product));
+            txt.append('\n');
+        }
 
-	public Product reviewProduct(final Product product, final Rating rating, final String comments) {
-		final List<Review> reviews = products.get(product);
-		products.remove(product, reviews);
-		reviews.add(new Review(rating, comments));
+        try {
+            final PrintStream out = new PrintStream(System.out, true, utf8Charset.name());
+            out.println(txt);
+        } catch (final UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
 
-		int sum = 0;
-		for (final Review review : reviews) {
-			sum += review.getRating().ordinal();
-		}
+    public Product reviewProduct(final Product product, final Rating rating, final String comments) {
+        final List<Review> reviews = products.get(product);
+        products.remove(product, reviews);
+        reviews.add(new Review(rating, comments));
 
-		final Product newProduct = product.applyRating(Rateable.convert(Math.round((float) sum / reviews.size())));
-		products.put(newProduct, reviews);
+        int sum = 0;
+        for (final Review review : reviews) {
+            sum += review.getRating().ordinal();
+        }
 
-		return newProduct;
-	}
+        final Product newProduct = product.applyRating(Rateable.convert(Math.round((float) sum / reviews.size())));
+        products.put(newProduct, reviews);
 
-	public Product reviewProduct(final int id, final Rating rating, final String comments) {
-		return reviewProduct(findProduct(id), rating, comments);
-	}
+        return newProduct;
+    }
 
-	private static class ResourceFormatter {
-		private final DateTimeFormatter dateFormat;
-		private final NumberFormat moneyFormat;
-		private final ResourceBundle resources;
+    public Product reviewProduct(final int id, final Rating rating, final String comments) {
+        return reviewProduct(findProduct(id), rating, comments);
+    }
 
-		private ResourceFormatter(final Locale locale) {
-			resources = ResourceBundle.getBundle(
-					"com/javase11/certification/productmanagement/nestedclasseslambda/data/resources", locale);
-			dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).localizedBy(locale);
-			moneyFormat = NumberFormat.getCurrencyInstance(locale);
-		}
+    private static class ResourceFormatter {
+        private final DateTimeFormatter dateFormat;
+        private final NumberFormat moneyFormat;
+        private final ResourceBundle resources;
 
-		private String formatReview(final Review review) {
-			return MessageFormat.format(resources.getString("review"), review.getRating().getStars(),
-					review.getComments());
-		}
+        private ResourceFormatter(final Locale locale) {
+            resources = ResourceBundle.getBundle(
+                    "com/javase11/certification/productmanagement/nestedclasseslambda/data/resources", locale);
+            dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).localizedBy(locale);
+            moneyFormat = NumberFormat.getCurrencyInstance(locale);
+        }
 
-		private String formatProduct(final Product product) {
-			return MessageFormat.format(resources.getString("product"), product.getName(),
-					moneyFormat.format(product.getPrice()), product.getRating().getStars(),
-					dateFormat.format(product.getBestBefore()));
-		}
+        private String formatReview(final Review review) {
+            return MessageFormat.format(resources.getString("review"), review.getRating().getStars(),
+                    review.getComments());
+        }
 
-		private String getText(final String key) {
-			return resources.getString(key);
-		}
-	}
+        private String formatProduct(final Product product) {
+            return MessageFormat.format(resources.getString("product"), product.getName(),
+                    moneyFormat.format(product.getPrice()), product.getRating().getStars(),
+                    dateFormat.format(product.getBestBefore()));
+        }
+
+        private String getText(final String key) {
+            return resources.getString(key);
+        }
+    }
 }

@@ -8,28 +8,27 @@
  *   You should have received a copy of the GNU General Public License along with this program. If not see <http://www.gnu.org/licenses>
  */
 
-package com.javase11.certification.productmanagement.hadleexceptions.data;
+package com.javase11.certification.productmanagement.handleexceptions.data;
 
 /**
- *
  * @author oracle
  * @version 4.0
  */
 @FunctionalInterface
 public interface Rateable<T> {
-	Rating DEFAULT_RATING = Rating.NOT_RATED;
+    Rating DEFAULT_RATING = Rating.NOT_RATED;
 
-	static Rating convert(final int stars) {
-		return (stars >= 0 && stars <= 5) ? Rating.values()[stars] : DEFAULT_RATING;
-	}
+    static Rating convert(final int stars) {
+        return (stars >= 0 && stars <= 5) ? Rating.values()[stars] : DEFAULT_RATING;
+    }
 
-	T applyRating(Rating rating);
+    T applyRating(Rating rating);
 
-	default T applyRating(final int stars) {
-		return applyRating(convert(stars));
-	}
+    default T applyRating(final int stars) {
+        return applyRating(convert(stars));
+    }
 
-	default Rating getRating() {
-		return DEFAULT_RATING;
-	}
+    default Rating getRating() {
+        return DEFAULT_RATING;
+    }
 }

@@ -10,7 +10,10 @@
 
 package com.javase11.certification.productmanagement.interfaces.data;
 
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.text.NumberFormat;
 import java.time.LocalDate;
@@ -20,53 +23,59 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 /**
- *
  * @author oracle
  * @version 4.0
  */
 public class ProductManager {
-	private final DateTimeFormatter dateFormat;
-	private final NumberFormat moneyFormat;
-	private final ResourceBundle resources;
-	private Product product;
-	private Review review;
+    private final Charset utf8Charset = Charset.forName("UTF-8");
+    private final DateTimeFormatter dateFormat;
+    private final NumberFormat moneyFormat;
+    private final ResourceBundle resources;
+    private Product product;
+    private Review review;
 
-	public ProductManager(final Locale locale) {
-		resources = ResourceBundle.getBundle("com/javase11/certification/productmanagement/interfaces/data/resources",
-				locale);
-		dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).localizedBy(locale);
-		moneyFormat = NumberFormat.getCurrencyInstance(locale);
-	}
+    public ProductManager(final Locale locale) {
+        resources = ResourceBundle.getBundle("com/javase11/certification/productmanagement/interfaces/data/resources",
+                locale);
+        dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).localizedBy(locale);
+        moneyFormat = NumberFormat.getCurrencyInstance(locale);
+    }
 
-	public void printProductReport() {
-		final StringBuilder txt = new StringBuilder();
-		txt.append(MessageFormat.format(resources.getString("product"), product.getName(),
-				moneyFormat.format(product.getPrice()), product.getRating(),
-				dateFormat.format(product.getBestBefore())));
-		txt.append("\n");
-		if (review != null) {
-			txt.append(MessageFormat.format(resources.getString("review"), review.getRating().getStars(),
-					review.getComments()));
-		} else {
-			txt.append(resources.getString("no.reviews"));
-		}
-		System.out.println(txt);
-	}
+    public void printProductReport() {
+        final StringBuilder txt = new StringBuilder();
+        txt.append(MessageFormat.format(resources.getString("product"), product.getName(),
+                moneyFormat.format(product.getPrice()), product.getRating(),
+                dateFormat.format(product.getBestBefore())));
+        txt.append("\n");
+        if (review != null) {
+            txt.append(MessageFormat.format(resources.getString("review"), review.getRating().getStars(),
+                    review.getComments()));
+        } else {
+            txt.append(resources.getString("no.reviews"));
+        }
 
-	public Product createProduct(final int id, final String name, final BigDecimal price, final Rating rating,
-			final LocalDate bestBefore) {
-		product = new Food(id, name, price, rating, bestBefore);
-		return product;
-	}
+        try {
+            final PrintStream out = new PrintStream(System.out, true, utf8Charset.name());
+            out.println(txt);
+        } catch (final UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
 
-	public Product createProduct(final int id, final String name, final BigDecimal price, final Rating rating) {
-		product = new Drink(id, name, price, rating);
-		return product;
-	}
+    public Product createProduct(final int id, final String name, final BigDecimal price, final Rating rating,
+                                 final LocalDate bestBefore) {
+        product = new Food(id, name, price, rating, bestBefore);
+        return product;
+    }
 
-	public Product reviewProduct(final Product product, final Rating rating, final String comments) {
-		review = new Review(rating, comments);
-		this.product = product.applyRating(rating);
-		return this.product;
-	}
+    public Product createProduct(final int id, final String name, final BigDecimal price, final Rating rating) {
+        product = new Drink(id, name, price, rating);
+        return product;
+    }
+
+    public Product reviewProduct(final Product product, final Rating rating, final String comments) {
+        review = new Review(rating, comments);
+        this.product = product.applyRating(rating);
+        return this.product;
+    }
 }

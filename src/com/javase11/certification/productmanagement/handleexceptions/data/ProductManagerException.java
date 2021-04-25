@@ -8,26 +8,19 @@
  *   You should have received a copy of the GNU General Public License along with this program. If not see <http://www.gnu.org/licenses>
  */
 
-package com.javase11.certification.productmanagement.hadleexceptions.data;
+package com.javase11.certification.productmanagement.handleexceptions.data;
 
-import java.math.BigDecimal;
-import java.time.LocalTime;
+public class ProductManagerException extends Exception {
+    private static final long serialVersionUID = 4881937233994912570L;
 
-public class Drink extends Product {
+    public ProductManagerException() {
+    }
 
-	Drink(final int id, final String name, final BigDecimal price, final Rating rating) {
-		super(id, name, price, rating);
-	}
+    public ProductManagerException(final String message) {
+        super(message);
+    }
 
-	@Override
-	public Product applyRating(final Rating newRating) {
-		return new Drink(getId(), getName(), getPrice(), newRating);
-	}
-
-	@Override
-	public BigDecimal getDiscount() {
-		final LocalTime now = LocalTime.now();
-		return (now.isAfter(LocalTime.of(17, 30)) && now.isBefore(LocalTime.of(18, 30))) ? super.getDiscount()
-				: BigDecimal.ZERO;
-	}
+    public ProductManagerException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
 }

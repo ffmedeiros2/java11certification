@@ -8,38 +8,26 @@
  *   You should have received a copy of the GNU General Public License along with this program. If not see <http://www.gnu.org/licenses>
  */
 
-package com.javase11.certification.productmanagement.concurrencymultithreading.data;
+package com.javase11.certification.productmanagement.handleexceptions.data;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalTime;
 
-public class Food extends Product {
-    private static final long serialVersionUID = -8411995638444638853L;
-    private final LocalDate bestBefore;
+public class Drink extends Product {
 
-    Food(final int id, final String name, final BigDecimal price, final Rating rating, final LocalDate bestBefore) {
+    Drink(final int id, final String name, final BigDecimal price, final Rating rating) {
         super(id, name, price, rating);
-        this.bestBefore = bestBefore;
     }
 
     @Override
     public Product applyRating(final Rating newRating) {
-        return new Food(getId(), getName(), getPrice(), newRating, bestBefore);
+        return new Drink(getId(), getName(), getPrice(), newRating);
     }
 
     @Override
     public BigDecimal getDiscount() {
-        return bestBefore.isEqual(LocalDate.now()) ? super.getDiscount() : BigDecimal.ZERO;
+        final LocalTime now = LocalTime.now();
+        return (now.isAfter(LocalTime.of(17, 30)) && now.isBefore(LocalTime.of(18, 30))) ? super.getDiscount()
+                : BigDecimal.ZERO;
     }
-
-    /**
-     * Get the value of best before date for the product
-     *
-     * @return the the value of bestBefore
-     */
-    @Override
-	public LocalDate getBestBefore() {
-        return bestBefore;
-    }
-
 }

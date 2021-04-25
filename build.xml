@@ -1,0 +1,183 @@
+<project name="shop">
+    <property name="src" location="src"/>
+    <property name="build" location="build"/>
+    <property name="dist" location="dist"/>
+
+    <target name="init">
+        <!-- Create the time stamp -->
+        <tstamp/>
+        <!-- Create the build directory structure used by compile -->
+        <mkdir dir="${build}"/>
+    </target>
+
+    <target name="compile" depends="init"
+            description="compile the source">
+        <!-- Compile the java code from ${src} into ${production} -->
+        <javac srcdir="${src}" destdir="${build}"/>
+        <copy todir="${build}">
+            <fileset dir="${src}">
+                <exclude name="**/*.java"/>
+            </fileset>
+        </copy>
+    </target>
+
+    <target name="dist-basic" depends="compile"
+            description="generate the distribution for the basic application">
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}/artifacts"/>
+
+        <jar destfile="${dist}/artifacts/Shop-basic.jar">
+            <fileset dir="${build}" includes="**/basic/"/>
+            <manifest>
+                <attribute name="Main-Class"
+                           value="com.javase11.certification.productmanagement.basic.app.Shop"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="dist-improved" depends="compile"
+            description="generate the distribution for the improved application">
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}/artifacts"/>
+
+        <jar destfile="${dist}/artifacts/Shop-improved.jar">
+            <fileset dir="${build}" includes="**/improved/"/>
+            <manifest>
+                <attribute name="Main-Class"
+                           value="com.javase11.certification.productmanagement.improved.app.Shop"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="dist-inheritance" depends="compile"
+            description="generate the distribution for the inheritance application">
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}/artifacts"/>
+
+        <jar destfile="${dist}/artifacts/Shop-inheritance.jar">
+            <fileset dir="${build}" includes="**/inheritance/"/>
+            <manifest>
+                <attribute name="Main-Class"
+                           value="com.javase11.certification.productmanagement.inheritance.app.Shop"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="dist-interfaces" depends="compile"
+            description="generate the distribution for the interfaces application">
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}/artifacts"/>
+
+        <jar destfile="${dist}/artifacts/Shop-interfaces.jar">
+            <fileset dir="${build}" includes="**/interfaces/"/>
+            <manifest>
+                <attribute name="Main-Class"
+                           value="com.javase11.certification.productmanagement.interfaces.app.Shop"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="dist-arrays" depends="compile"
+            description="generate the distribution for the arrays application">
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}/artifacts"/>
+
+        <jar destfile="${dist}/artifacts/Shop-arrays.jar">
+            <fileset dir="${build}" includes="**/arrays/"/>
+            <manifest>
+                <attribute name="Main-Class"
+                           value="com.javase11.certification.productmanagement.arrays.app.Shop"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="dist-collections" depends="compile"
+            description="generate the distribution for the collections application">
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}/artifacts"/>
+
+        <jar destfile="${dist}/artifacts/Shop-collections.jar">
+            <fileset dir="${build}" includes="**/collections/"/>
+            <manifest>
+                <attribute name="Main-Class"
+                           value="com.javase11.certification.productmanagement.collections.app.Shop"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="dist-nestedclasseslambda" depends="compile"
+            description="generate the distribution for the nested classes and lambda application">
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}/artifacts"/>
+
+        <jar destfile="${dist}/artifacts/Shop-nestedclasseslambda.jar">
+            <fileset dir="${build}" includes="**/nestedclasseslambda/"/>
+            <manifest>
+                <attribute name="Main-Class"
+                           value="com.javase11.certification.productmanagement.nestedclasseslambda.app.Shop"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="dist-streamapi" depends="compile"
+            description="generate the distribution for the stream api application">
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}/artifacts"/>
+
+        <jar destfile="${dist}/artifacts/Shop-streamapi.jar">
+            <fileset dir="${build}" includes="**/streamapi/"/>
+            <manifest>
+                <attribute name="Main-Class"
+                           value="com.javase11.certification.productmanagement.streamapi.app.Shop"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="dist-handleexceptions" depends="compile"
+            description="generate the distribution for the handle exceptions application">
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}/artifacts"/>
+
+        <jar destfile="${dist}/artifacts/Shop-handleexceptions.jar">
+            <fileset dir="${build}" includes="**/handleexceptions/"/>
+            <manifest>
+                <attribute name="Main-Class"
+                           value="com.javase11.certification.productmanagement.handleexceptions.app.Shop"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="dist-javaio" depends="compile"
+            description="generate the distribution for the java io application">
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}/artifacts"/>
+
+        <jar destfile="${dist}/artifacts/Shop-javaio.jar">
+            <fileset dir="${build}" includes="**/javaio/"/>
+            <manifest>
+                <attribute name="Main-Class"
+                           value="com.javase11.certification.productmanagement.javaio.app.Shop"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="dist-concurrencymultithreading" depends="compile"
+            description="generate the distribution for the concurrency and multithreading application">
+        <!-- Create the distribution directory -->
+        <mkdir dir="${dist}/artifacts"/>
+
+        <jar jarfile="${dist}/artifacts/Shop-concurrencymultithreading.jar" basedir="${build}">
+            <manifest>
+                <attribute name="Main-Class"
+                           value="com.javase11.certification.productmanagement.concurrencymultithreading.app.Shop"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="clean"
+            description="clean up">
+        <!-- Delete the ${build} and ${dist} directory trees -->
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+    </target>
+</project>
